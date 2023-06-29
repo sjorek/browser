@@ -1,0 +1,59 @@
+{
+    "name": "sjorek/browser",
+    "type": "library",
+    "description": "headless browser command to take screenshots or diff two urls pixel-by-pixel",
+    "license": "GPL-3.0+",
+    "bin": ["bin/browser"],
+    "repositories": {
+        "image": {
+            "type": "vcs",
+            "url": "https://github.com/sjorek/image.git"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "chrome-php/chrome": "^1.9",
+        "intervention/image": "^2.7",
+        "sjorek/image": "^1.0@dev",
+        "symfony/console": "^6.3",
+        "symfony/finder": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sjorek\\Browser\\": "src"
+        },
+        "files": ["src/autoload.php"]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        }
+    },
+    "scripts": {
+        "build:all": [
+            "@build:emulated-devices",
+            "@build:completion"
+        ],
+        "build:emulated-devices": "Sjorek\\Browser\\Tool\\EmulatedDevices::updateResource",
+        "build:completion": "Sjorek\\Browser\\Tool\\CompletionHandler::updateResources",
+        "lint:all": [
+            "@lint:php-cs-fixer"
+        ],
+        "lint:all:fix": [
+            "@lint:php-cs-fixer:fix"
+        ],
+        "lint:php-cs-fixer": "@lint:php-cs-fixer:fix --dry-run",
+        "lint:php-cs-fixer:fix": "php-cs-fixer fix --ansi --config=.php-cs-fixer.dist.php --using-cache=yes --diff"
+    },
+    "scripts-descriptions": {
+        "build:all": "Build whole project",
+        "build:emulated-devices": "Update list of emulated devices",
+        "build:completion": "Update completion values extracted from list of emulated devices"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.22"
+    }
+}
