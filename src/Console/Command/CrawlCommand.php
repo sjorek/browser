@@ -48,6 +48,22 @@ class CrawlCommand extends AbstractCommand
                 null,
                 $this->suggestScripts()
             )
+            ->addOption(
+                'before-script',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Run given script, before any other scripts',
+                null,
+                $this->suggestScripts()
+            )
+            ->addOption(
+                'after-script',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Run given script, after any other scripts',
+                null,
+                $this->suggestScripts()
+            )
             // TODO add more help here!
             ->setHelp(
                 self::COMMAND_HELP . <<<'HELP'
@@ -93,11 +109,18 @@ class CrawlCommand extends AbstractCommand
         }
         $input->setOption('depth', $depth);
 
-        $scripts = $input->getOption('script');
-        array_unshift($scripts, 'crawl/show-queue', 'crawl/open-url-and-await-navigation');
-        $scripts[] = 'crawl/collect-anchor-urls';
-
-        $this->browserScripts = $scripts;
+        $this->browserScripts = array_merge(
+            $input->getOption('before-script'),
+            [
+                'crawl/show-queue',
+                'crawl/open-url-and-await-navigation',
+            ],
+            $input->getOption('script'),
+            [
+                'crawl/collect-anchor-urls',
+            ],
+            $input->getOption('after-script'),
+        );
 
         return parent::setup();
     }

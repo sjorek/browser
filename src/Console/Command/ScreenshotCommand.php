@@ -41,6 +41,22 @@ class ScreenshotCommand extends AbstractCommand
                 null,
                 $this->suggestScripts()
             )
+            ->addOption(
+                'before-script',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Run given script, before any other scripts',
+                null,
+                $this->suggestScripts()
+            )
+            ->addOption(
+                'after-script',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Run given script, after any other scripts',
+                null,
+                $this->suggestScripts()
+            )
             // TODO add more help here!
             ->setHelp(
                 self::COMMAND_HELP . <<<'HELP'
@@ -90,11 +106,17 @@ class ScreenshotCommand extends AbstractCommand
             return self::FAILURE;
         }
 
-        $scripts = $input->getOption('script');
-        array_unshift($scripts, 'screenshot/open-url-and-await-navigation');
-        $scripts[] = 'screenshot/fullpage-and-save-to-file';
-
-        $this->browserScripts = $scripts;
+        $this->browserScripts = array_merge(
+            $input->getOption('before-script'),
+            [
+                'screenshot/open-url-and-await-navigation',
+            ],
+            $input->getOption('script'),
+            [
+                'screenshot/fullpage-and-save-to-file',
+            ],
+            $input->getOption('after-script'),
+        );
 
         return parent::setup();
     }
